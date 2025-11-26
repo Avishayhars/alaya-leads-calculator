@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחשבון קמפיין לידים - Alaya Poleg</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #FDF3E9;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .calculator-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(230, 124, 37, 0.2);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .logo {
+            max-width: 180px;
+            height: auto;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            direction: ltr;
+            text-align: right;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #E67C25;
+            box-shadow: 0 0 0 3px rgba(230, 124, 37, 0.1);
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: #E67C25;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(230, 124, 37, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-card {
+            background: #F9EBD2;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-right: 4px solid #E67C25;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            direction: ltr;
+            text-align: right;
+        }
+
+        .result-value.positive {
+            color: #10b981;
+        }
+
+        .result-value.warning {
+            color: #f59e0b;
+        }
+
+        .result-value.negative {
+            color: #ef4444;
+        }
+
+        .summary {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .summary h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #666;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: #333;
+            direction: ltr;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+
+        .toggle-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            border-color: #E67C25;
+            color: #E67C25;
+        }
+
+        .toggle-btn.active {
+            background: #E67C25;
+            border-color: transparent;
+            color: white;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @media (max-width: 480px) {
+            .calculator-container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .result-value {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="header">
+            <img src="https://static.wixstatic.com/media/54545e_193b5ea3ba354f81b461e0167d1c2625~mv2.png" class="logo" alt="Alaya Poleg">
+            <h1>מחשבון קמפיין לידים</h1>
+            <p>חשב את ביצועי הקמפיין שלך בקלות</p>
+        </div>
+
+        <form id="calculatorForm">
+            <div class="input-group">
+                <label for="leads">מספר לידים שהתקבלו</label>
+                <input type="number" id="leads" min="0" step="1" placeholder="לדוגמה: 100" required>
+                <div class="input-hint">כמות הלידים שהקמפיין ייצר</div>
+            </div>
+
+            <div class="input-group">
+                <label for="costPerLead">עלות לליד (₪)</label>
+                <input type="number" id="costPerLead" min="0" step="0.01" placeholder="לדוגמה: 25.50" required>
+                <div class="input-hint">כמה שילמת בממוצע על כל ליד</div>
+            </div>
+
+            <div class="input-group">
+                <label for="conversions">כמות סגירות</label>
+                <input type="number" id="conversions" min="0" step="1" placeholder="לדוגמה: 10" required>
+                <div class="input-hint">כמה לידים הפכו ללקוחות משלמים</div>
+            </div>
+
+            <div class="input-group">
+                <label>סוג הזנת הכנסה</label>
+                <div class="toggle-container">
+                    <button type="button" class="toggle-btn active" data-mode="average">הכנסה ממוצעת מסגירה</button>
+                    <button type="button" class="toggle-btn" data-mode="total">סך כל ההכנסות</button>
+                </div>
+            </div>
+
+            <div class="input-group" id="averageRevenueGroup">
+                <label for="averageRevenue">הכנסה ממוצעת מסגירה (₪)</label>
+                <input type="number" id="averageRevenue" min="0" step="0.01" placeholder="לדוגמה: 500">
+                <div class="input-hint">כמה כסף בממוצע מביא כל לקוח</div>
+            </div>
+
+            <div class="input-group" id="totalRevenueGroup" style="display: none;">
+                <label for="totalRevenue">סך כל ההכנסות (₪)</label>
+                <input type="number" id="totalRevenue" min="0" step="0.01" placeholder="לדוגמה: 5000">
+                <div class="input-hint">סך ההכנסה מכל הסגירות יחד</div>
+            </div>
+
+            <button type="submit" class="calculate-btn">חשב תוצאות</button>
+        </form>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="results" id="results">
+            <div class="result-card">
+                <div class="result-label">עלות לסגירה (CPA)</div>
+                <div class="result-value" id="costPerConversion">₪0</div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-label">ROAS (החזר על השקעה)</div>
+                <div class="result-value" id="roas">0x</div>
+            </div>
+
+            <div class="summary">
+                <h3>סיכום הקמפיין</h3>
+                <div class="summary-item">
+                    <span class="summary-label">סך ההשקעה בפרסום</span>
+                    <span class="summary-value" id="totalSpend">₪0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">שיעור המרה (Conversion Rate)</span>
+                    <span class="summary-value" id="conversionRate">0%</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">רווח נקי</span>
+                    <span class="summary-value" id="netProfit">₪0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">ROI (החזר על השקעה)</span>
+                    <span class="summary-value" id="roi">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let revenueMode = 'average';
+        
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                revenueMode = this.dataset.mode;
+                
+                if (revenueMode === 'average') {
+                    document.getElementById('averageRevenueGroup').style.display = 'block';
+                    document.getElementById('totalRevenueGroup').style.display = 'none';
+                    document.getElementById('averageRevenue').required = true;
+                    document.getElementById('totalRevenue').required = false;
+                } else {
+                    document.getElementById('averageRevenueGroup').style.display = 'none';
+                    document.getElementById('totalRevenueGroup').style.display = 'block';
+                    document.getElementById('averageRevenue').required = false;
+                    document.getElementById('totalRevenue').required = true;
+                }
+            });
+        });
+
+        document.getElementById('calculatorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const leads = parseFloat(document.getElementById('leads').value);
+            const costPerLead = parseFloat(document.getElementById('costPerLead').value);
+            const conversions = parseFloat(document.getElementById('conversions').value);
+            
+            let revenue;
+            if (revenueMode === 'average') {
+                const averageRevenue = parseFloat(document.getElementById('averageRevenue').value) || 0;
+                revenue = conversions * averageRevenue;
+            } else {
+                revenue = parseFloat(document.getElementById('totalRevenue').value) || 0;
+            }
+            
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.classList.remove('show');
+            
+            if (conversions > leads) {
+                errorMessage.textContent = 'שגיאה: מספר הסגירות לא יכול להיות גדול ממספר הלידים';
+                errorMessage.classList.add('show');
+                return;
+            }
+            
+            if (conversions === 0) {
+                errorMessage.textContent = 'שים לב: לא היו סגירות בקמפיין זה';
+                errorMessage.classList.add('show');
+            }
+            
+            const totalSpend = leads * costPerLead;
+            const costPerConversion = conversions > 0 ? totalSpend / conversions : 0;
+            const roas = totalSpend > 0 ? revenue / totalSpend : 0;
+            const conversionRate = leads > 0 ? (conversions / leads) * 100 : 0;
+            const netProfit = revenue - totalSpend;
+            const roi = totalSpend > 0 ? ((revenue - totalSpend) / totalSpend) * 100 : 0;
+            
+            document.getElementById('costPerConversion').textContent = 
+                conversions > 0 ? `₪${costPerConversion.toFixed(2)}` : 'אין סגירות';
+            
+            const roasElement = document.getElementById('roas');
+            roasElement.textContent = `${roas.toFixed(2)}x`;
+            
+            roasElement.classList.remove('positive', 'warning', 'negative');
+            if (roas >= 3) {
+                roasElement.classList.add('positive');
+            } else if (roas >= 1) {
+                roasElement.classList.add('warning');
+            } else {
+                roasElement.classList.add('negative');
+            }
+            
+            document.getElementById('totalSpend').textContent = `₪${totalSpend.toFixed(2)}`;
+            document.getElementById('conversionRate').textContent = `${conversionRate.toFixed(2)}%`;
+            document.getElementById('netProfit').textContent = `₪${netProfit.toFixed(2)}`;
+            document.getElementById('roi').textContent = `${roi.toFixed(2)}%`;
+            
+            document.getElementById('results').classList.add('show');
+            
+            setTimeout(() => {
+                document.getElementById('results').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'nearest' 
+                });
+            }, 100);
+        });
+        
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                document.getElementById('errorMessage').classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>
